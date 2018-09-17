@@ -12,3 +12,4 @@ class defaults(object):
     minimum_coin_area = 22179
     cropped_output_directory = './results/cropped'
     merged_output_directory = './results/merged'
+    output_directory = pathlib.Path('~').expanduser()/'Pictures'/'bullion'
