@@ -5,9 +5,6 @@ obverse and reverse images"""
 import datetime
 import logging
 import subprocess
-
-import cv2
-import numpy
 import pathlib
 
 import termcolor
@@ -15,7 +12,7 @@ import termcolor
 logger = logging.getLogger(__name__)
 
 import config
-from .. import utilities
+from .. import splitter
 
 
 def cli(subcommand):
@@ -60,6 +57,16 @@ def main(args):
         'obverse', 'reverse'
     )
     reverse = start_scan(path=reverse_image_file_path)
+
+    obverse = splitter.extract_ingots(raw_scanned_image_path=obverse)
+    reverse = splitter.extract_ingots(raw_scanned_image_path=reverse)
+
+    merged_images = splitter.merge(
+        obverse, reverse,
+        config.defaults.merged_output_directory
+    )
+    logger.info("{0} merged images created".format(len(merged_images)))
+    logger.info("\n".join(merged_images))
 
 
 def start_scan(path):
