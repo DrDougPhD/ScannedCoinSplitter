@@ -11,7 +11,7 @@ from . import utilities
 
 
 def extract_ingots(raw_scanned_image_path):
-    raw_scanned_image = cv2.imread(raw_scanned_image_path)
+    raw_scanned_image = cv2.imread(str(raw_scanned_image_path))
     archiver = utilities.IntermediateImageArchiver(
         original_image_path=raw_scanned_image_path,
         archival_directory=config.defaults.intermediate_archival_directory
