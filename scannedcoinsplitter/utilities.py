@@ -91,7 +91,7 @@ class ImageCropper(object):
     def __init__(self, original_file_path, dest):
         self.dest = dest
         self.filename = os.path.basename(original_file_path).split(".")[0]
-        self.img = cv2.imread(original_file_path)
+        self.img = cv2.imread(str(original_file_path))
         self.n = 0
 
         os.makedirs(dest, exist_ok=True)
