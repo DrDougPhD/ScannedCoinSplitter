@@ -74,7 +74,8 @@ def start_scan(path):
     with open(str(path), 'w') as scanned_file:
         subprocess.call([
             "scanimage",
-            "--device-name", "hpaio:/usb/Deskjet_F4100_series?serial=CN7CM6G1Q104TJ",
+            "--device-name", config.defaults.scanner,
+            # "--device", config.defaults.scanner,
             "--resolution", "300",
             "--format=tiff",
         ], stdout=scanned_file)
