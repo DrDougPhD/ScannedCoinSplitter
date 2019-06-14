@@ -25,13 +25,21 @@ def cli(subcommand):
 
 
 def main(args):
+    cropped_output_directory = args.output_directory / config.defaults.cropped_output_directory
+    cropped_output_directory.mkdir(parents=True, exist_ok=True)
+
+    merged_output_directory = args.output_directory / config.defaults.merged_output_directory
+    merged_output_directory.mkdir(parents=True, exist_ok=True)
+
     # open obverse and reverse images
-    obverse = splitter.extract_ingots(raw_scanned_image_path=args.obverse_image)
-    reverse = splitter.extract_ingots(raw_scanned_image_path=args.reverse_image)
+    obverse = splitter.extract_ingots(raw_scanned_image_path=args.obverse_image,
+                                      output_directory=cropped_output_directory)
+    reverse = splitter.extract_ingots(raw_scanned_image_path=args.reverse_image,
+                                      output_directory=cropped_output_directory)
 
     merged_images = splitter.merge(
         obverse, reverse,
-        config.defaults.merged_output_directory
+        merged_output_directory
     )
     logger.info("{0} merged images created".format(len(merged_images)))
     logger.info("\n".join(merged_images))

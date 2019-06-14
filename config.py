@@ -12,6 +12,6 @@ class defaults(object):
     border_reduction = 50
     intermediate_archival_directory = pathlib.Path('/tmp/scannedcoinsplitter/')
     minimum_coin_area = 22179
-    cropped_output_directory = './results/cropped'
-    merged_output_directory = './results/merged'
+    cropped_output_directory = 'split'
+    merged_output_directory = 'merged'
     output_directory = pathlib.Path('~').expanduser()/'Pictures'/'bullion'

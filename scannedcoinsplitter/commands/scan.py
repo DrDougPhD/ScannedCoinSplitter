@@ -36,6 +36,12 @@ def main(args):
     # create output directory if it doesn't exist
     args.output_directory.mkdir(parents=True, exist_ok=True)
 
+    cropped_output_directory = args.output_directory / config.defaults.cropped_output_directory
+    cropped_output_directory.mkdir(parents=True, exist_ok=True)
+
+    merged_output_directory = args.output_directory / config.defaults.merged_output_directory
+    merged_output_directory.mkdir(parents=True, exist_ok=True)
+
     # find a unique name for this image
     filename_template = '{name} - {number_field} - obverse.tiff'.format(
         name=args.image_name,
@@ -51,19 +57,21 @@ def main(args):
     obverse = start_scan(path=obverse_image_file_path)
 
     # wait for the user to flip the coins/bars on the scanner
-    input('Press Enter after flipping coins/bars on scanner...')
+    input('Press Enter after flipping coins/bars on scanner... ')
 
     reverse_image_file_path = args.output_directory/obverse.name.replace(
         'obverse', 'reverse'
     )
     reverse = start_scan(path=reverse_image_file_path)
 
-    obverse = splitter.extract_ingots(raw_scanned_image_path=obverse)
-    reverse = splitter.extract_ingots(raw_scanned_image_path=reverse)
+    obverse = splitter.extract_ingots(raw_scanned_image_path=obverse,
+                                      output_directory=cropped_output_directory)
+    reverse = splitter.extract_ingots(raw_scanned_image_path=reverse,
+                                      output_directory=cropped_output_directory)
 
     merged_images = splitter.merge(
         obverse, reverse,
-        config.defaults.merged_output_directory
+        merged_output_directory
     )
     logger.info("{0} merged images created".format(len(merged_images)))
     logger.info("\n".join(merged_images))

@@ -10,7 +10,7 @@ import config
 from . import utilities
 
 
-def extract_ingots(raw_scanned_image_path):
+def extract_ingots(raw_scanned_image_path, output_directory):
     raw_scanned_image = cv2.imread(str(raw_scanned_image_path))
     archiver = utilities.IntermediateImageArchiver(
         original_image_path=raw_scanned_image_path,
@@ -55,7 +55,7 @@ def extract_ingots(raw_scanned_image_path):
 
     cropper = utilities.ImageCropper(
         original_file_path=raw_scanned_image_path,
-        dest=config.defaults.cropped_output_directory
+        dest=output_directory,
     )
     split = utilities.SplitScan()
 
