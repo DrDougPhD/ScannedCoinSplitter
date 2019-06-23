@@ -4,6 +4,7 @@
 obverse and reverse images"""
 import datetime
 import logging
+import os
 import subprocess
 import pathlib
 import termcolor
@@ -86,10 +87,11 @@ def start_scan(path):
             # "--device", config.defaults.scanner,
             "--resolution", "300",
             "--format=tiff",
-        ], stdout=scanned_file, timeout=10)
+        ], stdout=scanned_file)
 
-        if return_code != 0:
-            raise exceptions.MissingScannerException(config.defaults.scanner)
+    if return_code != 0:
+        os.remove(path)
+        raise exceptions.MissingScannerException(config.defaults.scanner)
 
     logger.info('Scanning complete: {file}'.format(
         file=termcolor.colored(path, 'green', attrs=['bold'])
