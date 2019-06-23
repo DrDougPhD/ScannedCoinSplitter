@@ -15,3 +15,4 @@ class defaults(object):
     cropped_output_directory = 'split'
     merged_output_directory = 'merged'
     output_directory = pathlib.Path('~').expanduser()/'Pictures'/'bullion'
+    timeout = 60 #seconds, 1 minute

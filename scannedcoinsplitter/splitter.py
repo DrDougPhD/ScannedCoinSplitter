@@ -7,12 +7,14 @@ import numpy
 logger = logging.getLogger(__name__)
 
 import config
+from .utilities.image import archive
+from .utilities.image import crop
 from . import utilities
 
 
 def extract_ingots(raw_scanned_image_path, output_directory):
     raw_scanned_image = cv2.imread(str(raw_scanned_image_path))
-    archiver = utilities.IntermediateImageArchiver(
+    archiver = archive.IntermediateImageArchiver(
         original_image_path=raw_scanned_image_path,
         archival_directory=config.defaults.intermediate_archival_directory
     )
@@ -53,11 +55,11 @@ def extract_ingots(raw_scanned_image_path, output_directory):
     blank_image_contours = numpy.zeros(raw_scanned_image.shape, numpy.uint8)
     blank_image = numpy.zeros(raw_scanned_image.shape, numpy.uint8)
 
-    cropper = utilities.ImageCropper(
+    cropper = crop.ImageCropper(
         original_file_path=raw_scanned_image_path,
         dest=output_directory,
     )
-    split = utilities.SplitScan()
+    split = crop.SplitScan()
 
     next_countour_indices = hierarchy[0, :, 0]
     next_index = 0
@@ -65,7 +67,7 @@ def extract_ingots(raw_scanned_image_path, output_directory):
         c = contours[next_index]
         cv2.drawContours(blank_image_contours, c, -1, (255, 0, 0), 5)
         x, y, w, h = cv2.boundingRect(c)
-        box = utilities.CroppingBox(x=x, y=y, w=w, h=h)
+        box = crop.CroppingBox(x=x, y=y, w=w, h=h)
 
         # scale up these coordinates to their original size
         if box.area() > config.defaults.minimum_coin_area:
@@ -94,7 +96,7 @@ def extract_ingots(raw_scanned_image_path, output_directory):
 
 
 def merge(obverse, reverse, destination):
-  merger = utilities.CroppedImageMerger(destination)
+  merger = crop.CroppedImageMerger(destination)
 
   obverse.reorderByMinimumDistance(reverse)
 
