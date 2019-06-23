@@ -6,13 +6,13 @@ import datetime
 import logging
 import subprocess
 import pathlib
-
 import termcolor
 
 logger = logging.getLogger(__name__)
 
 import config
 from .. import splitter
+from ..utilities import exceptions
 
 
 def cli(subcommand):
@@ -80,13 +80,16 @@ def main(args):
 def start_scan(path):
     logger.info('Beginning scan')
     with open(str(path), 'w') as scanned_file:
-        subprocess.call([
+        return_code = subprocess.call([
             "scanimage",
             "--device-name", config.defaults.scanner,
             # "--device", config.defaults.scanner,
             "--resolution", "300",
             "--format=tiff",
-        ], stdout=scanned_file)
+        ], stdout=scanned_file, timeout=10)
+
+        if return_code != 0:
+            raise exceptions.MissingScannerException(config.defaults.scanner)
 
     logger.info('Scanning complete: {file}'.format(
         file=termcolor.colored(path, 'green', attrs=['bold'])

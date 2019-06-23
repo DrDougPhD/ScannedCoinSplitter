@@ -31,7 +31,7 @@ import logging
 import progressbar
 
 import cli
-
+from scannedcoinsplitter.utilities import exceptions
 
 __appname__ = "scannedcoinsplitter"
 __author__ = "Doug McGeehan"
@@ -46,7 +46,10 @@ logger = logging.getLogger('scannedcoinsplitter')
 
 def main(args):
     '''ADD DESCRIPTION HERE'''
-    args.func(args=args)
+    try:
+        args.func(args=args)
+    except exceptions.MissingScannerException as e:
+        logger.error(e)
 
 
 if __name__ == '__main__':
