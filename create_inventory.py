@@ -38,7 +38,7 @@ def main(args):
 
 
 class WeightParser(object):
-    weight_regex = re.compile(r'.+(?P<value>\d+) (?P<unit>ozt|g).+')
+    weight_regex = re.compile(r'.+ (?P<value>\d+(\.\d+)?) (?P<unit>ozt|g).*')
 
     weight_converter = {
         'g': lambda v: v / 31.1,
@@ -63,7 +63,10 @@ class WeightParser(object):
 
 class IngotNameParser(object):
     def __init__(self, path: pathlib.Path, weight: WeightParser):
-        self.name = path.stem.replace(str(weight), '').strip()
+        self.name = path.stem\
+            .replace(str(weight), '')\
+            .replace('  ', ' ')\
+            .strip()
 
     def __repr__(self):
         return self.name
