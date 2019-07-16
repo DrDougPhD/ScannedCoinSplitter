@@ -1,9 +1,12 @@
-#!/usr/bin/env python3
+#!/usr/bin/env /home/doug/Software/ScannedCoinSplitter/venv/bin/python3
 # -*- coding: utf-8 -*-
 import csv
 import pathlib
 import re
 import sys
+
+
+DEFAULT_SCANNING_DIR = './results/safety-deposit-box'
 
 
 def main(args):
@@ -12,7 +15,7 @@ def main(args):
 
     ingots = []
     invalid_filenames = []
-    for scanned_image in scan_directory.glob('merged/*.png'):
+    for scanned_image in scan_directory.glob('**/merged/*.png'):
         try:
             ingot = Ingot(path=scanned_image)
         except AttributeError:
@@ -112,8 +115,11 @@ class Inventory(object):
 
 
 if __name__ == '__main__':
+    arguments = list(sys.argv)
     if len(sys.argv) != 2:
         print(f'Usage: {sys.argv[0]} PATH/TO/NAMED/SCANS/DIRECTORY')
-        sys.exit(1)
+        print(f'\tif no directory provided, it defaults to {DEFAULT_SCANNING_DIR}')
+        arguments.append(DEFAULT_SCANNING_DIR)
+        # sys.exit(1)
 
-    main(sys.argv)
+    main(arguments)
