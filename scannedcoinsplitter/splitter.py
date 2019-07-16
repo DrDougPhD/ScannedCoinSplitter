@@ -19,10 +19,11 @@ def extract_ingots(raw_scanned_image_path, output_directory):
         archival_directory=config.defaults.intermediate_archival_directory
     )
 
+    scan_border_reduction = config.defaults.scan_border_reduction
     border_width = config.defaults.border_reduction
     reduced_border_image = raw_scanned_image[
-        border_width:-border_width,
-        border_width:-border_width
+        scan_border_reduction:-scan_border_reduction,
+        scan_border_reduction:-scan_border_reduction
     ]
 
     gray_scanned_image = cv2.cvtColor(
@@ -31,21 +32,24 @@ def extract_ingots(raw_scanned_image_path, output_directory):
     )
     archiver.archive_image(opencv_image=gray_scanned_image, image_name='gray')
 
-    threshold = cv2.adaptiveThreshold(
-        gray_scanned_image,
-        255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,
-        11, 2
-    )
+    # Otsu's thresholding after Gaussian filtering
+    blurred_gray_image = cv2.GaussianBlur(gray_scanned_image, (5, 5), 0)
+    ret3, threshold = cv2.threshold(
+        blurred_gray_image, 0, 255,
+        cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+    # threshold = cv2.adaptiveThreshold(
+    #     gray_scanned_image,
+    #     255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,
+    #     11, 2
+    # )
     archiver.archive_image(opencv_image=threshold, image_name='threshold')
 
     kernel = numpy.ones((8, 8), numpy.uint8)
     opening = cv2.morphologyEx(threshold, cv2.MORPH_OPEN, kernel)
     archiver.archive_image(opencv_image=opening, image_name="opening")
 
-    closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel)
-    archiver.archive_image(opencv_image=closing, image_name="closing")
-
-    negated = cv2.bitwise_not(closing)
+    negated = cv2.bitwise_not(opening)
     archiver.archive_image(opencv_image=negated, image_name="negated")
 
     _, contours, hierarchy = cv2.findContours(
@@ -71,7 +75,7 @@ def extract_ingots(raw_scanned_image_path, output_directory):
 
         # scale up these coordinates to their original size
         if box.area() > config.defaults.minimum_coin_area:
-            box = box.expand(border_width)
+            box = box.expand(border_width, offset=scan_border_reduction)
             logger.debug(box)
 
             img = cropper.crop(**box.getCorners())

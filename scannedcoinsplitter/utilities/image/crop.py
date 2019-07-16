@@ -24,14 +24,14 @@ class CroppingBox:
     def area(self):
         return self.w * self.h
 
-    def expand(self, border):
+    def expand(self, padding, offset):
         box = CroppingBox(
-            x=self.x + border,
-            y=self.y + border,
-            w=self.w,
-            h=self.h,
+            x=self.x + offset - padding,
+            y=self.y + offset - padding,
+            w=self.w + (2*padding),
+            h=self.h + (2*padding),
         )
-        logger.debug("Expanding borders of {0} by {1} pixels".format(self, border))
+        logger.debug("Expanding borders of {0} by {1} pixels".format(self, padding))
         return box
 
     def getCorners(self):

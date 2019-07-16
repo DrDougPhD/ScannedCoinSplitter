@@ -4,6 +4,8 @@
 obverse and reverse images"""
 
 import logging
+import pathlib
+
 import config
 from .. import splitter
 
@@ -14,12 +16,18 @@ def cli(subcommand):
     '''Add command-line arguments to this subcommand
     '''
     subcommand.add_argument(
-        '-o', '--obverse-image',
+        '-f', '--obverse-image',
         help='input obverse image',
     )
     subcommand.add_argument(
-        '-r', '--reverse-image',
+        '-b', '--reverse-image',
         help='input reverse image',
+    )
+    subcommand.add_argument(
+        '-o', '--output-directory',
+        help='directory into which to output scans',
+        default=config.defaults.output_directory,
+        type=pathlib.Path
     )
     subcommand.set_defaults(func=main)
 
