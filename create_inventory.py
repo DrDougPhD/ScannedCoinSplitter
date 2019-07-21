@@ -27,6 +27,8 @@ def main(args):
             print(f'\tweight := {ingot.weight}')
             ingots.append(ingot)
 
+    ingots.sort()
+
     with Inventory(scan_directory=scan_directory) as inventory:
         for ingot in ingots:
             inventory.add(ingot=ingot)
@@ -83,6 +85,12 @@ class Ingot(object):
 
     def __repr__(self):
         return self.filename
+
+    def __eq__(self, other):
+        return self.filename == other.filename
+
+    def __lt__(self, other):
+        return self.filename < other.filename
 
 
 class Inventory(object):
