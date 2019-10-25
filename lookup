@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+KEYWORD="${1}"
+
+find $(pwd) -type f -name "*${KEYWORD}*"
+
